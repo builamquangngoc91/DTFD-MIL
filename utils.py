@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.metrics import roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score
 from sklearn.preprocessing import label_binarize
-
+import torch
 def get_cam_1d(classifier, features):
     tweight = list(classifier.parameters())[-2]
     cam_maps = torch.einsum('bgf,cf->bcg', [features, tweight])
