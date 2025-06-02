@@ -2,6 +2,16 @@ import numpy as np
 from sklearn.metrics import roc_auc_score, roc_curve, accuracy_score, precision_score, recall_score, f1_score
 from sklearn.preprocessing import label_binarize
 
+def get_cam_1d(classifier, features):
+    tweight = list(classifier.parameters())[-2]
+    cam_maps = torch.einsum('bgf,cf->bcg', [features, tweight])
+    return cam_maps
+
+def optimal_thresh(fpr, tpr, thresholds, p=0):
+    loss = (fpr - tpr) - p * tpr / (fpr + tpr + 1)
+    idx = np.argmin(loss, axis=0)
+    return fpr[idx], tpr[idx], thresholds[idx]
+
 def roc_threshold(label, prediction):
     """
     Fixed roc_threshold function to handle both binary and multi-class cases
